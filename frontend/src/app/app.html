@@ -1,15 +1,11 @@
 <main class="app-container">
   <header class="app-header">
-    <h1>Todo App</h1>
+    <img src="logo.png" alt="TimeFor">
     <p>Gestiona tus tareas de forma sencilla</p>
   </header>
 
   <section class="app-content">
-    <app-todo-form
-      [todoToEdit]="todoToEdit()"
-      (save)="onSave($event)"
-      (cancel)="onCancelEdit()"
-    />
+    <app-todo-form (save)="onSave($event)" />
 
     <app-todo-list
       [todos]="todos()"
@@ -19,3 +15,9 @@
     />
   </section>
 </main>
+
+<app-edit-modal
+  [todo]="todoToEdit()"
+  (save)="onSaveEdit($event)"
+  (close)="onCancelEdit()"
+/>

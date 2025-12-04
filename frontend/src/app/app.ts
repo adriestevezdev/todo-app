@@ -2,12 +2,13 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { TodoService } from './services/todo.service';
 import { TodoFormComponent } from './components/todo-form/todo-form.component';
 import { TodoListComponent } from './components/todo-list/todo-list.component';
+import { EditModalComponent } from './components/edit-modal/edit-modal.component';
 import { Todo } from './models/todo.model';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TodoFormComponent, TodoListComponent],
+  imports: [TodoFormComponent, TodoListComponent, EditModalComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -29,6 +30,13 @@ export class App implements OnInit {
   }
 
   onSave(data: { title: string; description: string }): void {
+    this.todoService.createTodo(data.title, data.description || undefined).subscribe({
+      next: () => this.loadTodos(),
+      error: (err) => console.error('Error creating todo:', err),
+    });
+  }
+
+  onSaveEdit(data: { title: string; description: string }): void {
     const editing = this.todoToEdit();
     if (editing) {
       this.todoService.updateTodo(editing.id, data).subscribe({
@@ -37,11 +45,6 @@ export class App implements OnInit {
           this.todoToEdit.set(null);
         },
         error: (err) => console.error('Error updating todo:', err),
-      });
-    } else {
-      this.todoService.createTodo(data.title, data.description || undefined).subscribe({
-        next: () => this.loadTodos(),
-        error: (err) => console.error('Error creating todo:', err),
       });
     }
   }
@@ -62,9 +65,11 @@ export class App implements OnInit {
   }
 
   onDelete(todo: Todo): void {
-    this.todoService.deleteTodo(todo.id).subscribe({
-      next: () => this.loadTodos(),
-      error: (err) => console.error('Error deleting todo:', err),
-    });
+    if (confirm(`¿Estás seguro de que quieres eliminar "${todo.title}"?`)) {
+      this.todoService.deleteTodo(todo.id).subscribe({
+        next: () => this.loadTodos(),
+        error: (err) => console.error('Error deleting todo:', err),
+      });
+    }
   }
 }
