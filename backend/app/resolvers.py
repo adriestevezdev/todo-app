@@ -1,3 +1,6 @@
+"""
+Resolvers GraphQL para operaciones CRUD de tareas.
+"""
 from ariadne import QueryType, MutationType
 from bson import ObjectId
 from pymongo import ReturnDocument
@@ -18,8 +21,11 @@ def serialize_todo(todo: dict) -> dict:
     }
 
 
+# === QUERIES ===
+
 @query.field("todos")
 async def resolve_todos(*_):
+    """Obtiene todas las tareas."""
     todos = []
     async for todo in todos_collection.find():
         todos.append(serialize_todo(todo))
@@ -28,6 +34,7 @@ async def resolve_todos(*_):
 
 @query.field("todo")
 async def resolve_todo(*_, id):
+    """Obtiene una tarea por ID."""
     try:
         todo = await todos_collection.find_one({"_id": ObjectId(id)})
         if todo:
@@ -37,8 +44,11 @@ async def resolve_todo(*_, id):
     return None
 
 
+# === MUTATIONS ===
+
 @mutation.field("createTodo")
 async def resolve_create_todo(*_, title, description=None):
+    """Crea una nueva tarea."""
     todo_data = {
         "title": title,
         "description": description,
@@ -51,6 +61,7 @@ async def resolve_create_todo(*_, title, description=None):
 
 @mutation.field("updateTodo")
 async def resolve_update_todo(*_, id, title=None, description=None, completed=None):
+    """Actualiza una tarea existente (campos parciales)."""
     try:
         update_data = {}
         if title is not None:
@@ -77,6 +88,7 @@ async def resolve_update_todo(*_, id, title=None, description=None, completed=No
 
 @mutation.field("deleteTodo")
 async def resolve_delete_todo(*_, id):
+    """Elimina una tarea por ID."""
     try:
         result = await todos_collection.delete_one({"_id": ObjectId(id)})
         return result.deleted_count > 0

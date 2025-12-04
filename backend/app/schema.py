@@ -1,3 +1,6 @@
+"""
+Definición del esquema GraphQL (tipos, queries y mutations).
+"""
 from ariadne import gql
 
 type_defs = gql("""

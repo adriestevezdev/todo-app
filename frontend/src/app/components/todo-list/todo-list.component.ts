@@ -12,16 +12,4 @@ export class TodoListComponent {
   toggle = output<Todo>();
   edit = output<Todo>();
   delete = output<Todo>();
-
-  onToggle(todo: Todo): void {
-    this.toggle.emit(todo);
-  }
-
-  onEdit(todo: Todo): void {
-    this.edit.emit(todo);
-  }
-
-  onDelete(todo: Todo): void {
-    this.delete.emit(todo);
-  }
 }

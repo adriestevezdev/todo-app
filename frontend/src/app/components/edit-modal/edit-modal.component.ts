@@ -32,13 +32,9 @@ export class EditModalComponent {
     }
   }
 
-  onClose(): void {
-    this.close.emit();
-  }
-
   onBackdropClick(event: MouseEvent): void {
     if ((event.target as HTMLElement).classList.contains('modal-backdrop')) {
-      this.onClose();
+      this.close.emit();
     }
   }
 }

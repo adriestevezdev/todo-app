@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2>Editar tarea</h2>
-        <button type="button" class="btn-close" (click)="onClose()" title="Cerrar">
+        <button type="button" class="btn-close" (click)="close.emit()" title="Cerrar">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
@@ -32,7 +32,7 @@
           ></textarea>
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" (click)="onClose()">Cancelar</button>
+          <button type="button" class="btn btn-secondary" (click)="close.emit()">Cancelar</button>
           <button type="submit" class="btn btn-primary" [disabled]="!title.trim()">Guardar</button>
         </div>
       </form>

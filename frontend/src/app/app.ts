@@ -15,13 +15,16 @@ import { Todo } from './models/todo.model';
 export class App implements OnInit {
   private readonly todoService = inject(TodoService);
 
+  /** Lista reactiva de tareas */
   todos = signal<Todo[]>([]);
+  /** Tarea seleccionada para editar (null si no hay modal abierto) */
   todoToEdit = signal<Todo | null>(null);
 
   ngOnInit(): void {
     this.loadTodos();
   }
 
+  /** Carga todas las tareas desde el backend */
   loadTodos(): void {
     this.todoService.getTodos().subscribe({
       next: (todos) => this.todos.set(todos),
@@ -29,6 +32,7 @@ export class App implements OnInit {
     });
   }
 
+  /** Crea una nueva tarea */
   onSave(data: { title: string; description: string }): void {
     this.todoService.createTodo(data.title, data.description || undefined).subscribe({
       next: () => this.loadTodos(),
@@ -36,6 +40,7 @@ export class App implements OnInit {
     });
   }
 
+  /** Guarda los cambios de una tarea editada */
   onSaveEdit(data: { title: string; description: string }): void {
     const editing = this.todoToEdit();
     if (editing) {
@@ -49,6 +54,7 @@ export class App implements OnInit {
     }
   }
 
+  /** Alterna el estado completado/pendiente de una tarea */
   onToggle(todo: Todo): void {
     this.todoService.updateTodo(todo.id, { completed: !todo.completed }).subscribe({
       next: () => this.loadTodos(),
@@ -56,14 +62,17 @@ export class App implements OnInit {
     });
   }
 
+  /** Abre el modal de edición */
   onEdit(todo: Todo): void {
     this.todoToEdit.set(todo);
   }
 
+  /** Cierra el modal de edición */
   onCancelEdit(): void {
     this.todoToEdit.set(null);
   }
 
+  /** Elimina una tarea (con confirmación) */
   onDelete(todo: Todo): void {
     if (confirm(`¿Estás seguro de que quieres eliminar "${todo.title}"?`)) {
       this.todoService.deleteTodo(todo.id).subscribe({
